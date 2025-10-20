@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanWear - Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        .cart-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 50px 0;
+        }
+        
+        /* Footer Styles from Home Page */
+        .footer-section {
+            background: linear-gradient(135deg, #000, #222, #444);
+            color: white;
+            padding: 60px 0 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent 60%);
+            animation: moveLight 8s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes moveLight {
+            0% { transform: translateX(-30%); }
+            50% { transform: translateX(30%); }
+            100% { transform: translateX(-30%); }
+        }
+
+        .footer-section h5 { 
+            font-weight: 700; 
+            margin-bottom: 20px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+        .footer-section ul { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0; 
+        }
+        .footer-section ul li { 
+            margin-bottom: 10px; 
+        }
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+        }
+        .footer-section ul li a:hover { 
+            color: #fff; 
+            padding-left: 5px; 
+            text-decoration: underline; 
+        }
+
+        .footer-section .social-icons a {
+            color: #bbb;
+            font-size: 1.6rem;
+            margin: 0 10px;
+            transition: color 0.3s, transform 0.3s;
+        }
+        .footer-section .social-icons a:hover { 
+            color: #fff; 
+            transform: translateY(-4px); 
+        }
+
+        .footer-logo { 
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            color: white; 
+            letter-spacing: 1px; 
+            margin-bottom: 15px; 
+        }
+        .footer-bottom { 
+            border-top: 1px solid rgba(255,255,255,0.15); 
+            margin-top: 30px; 
+            padding-top: 15px; 
+        }
+        .footer-bottom p { 
+            margin: 0; 
+            font-size: 0.95rem; 
+            color: #aaa; 
+        }
+        .footer-bottom span { 
+            color: #fff; 
+            font-weight: 500; 
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .footer-section h5 { font-size: 1.1rem; }
+            .footer-section .social-icons a { font-size: 1.4rem; }
+        }
+        @media (max-width: 576px) {
+            .footer-section { text-align: center; }
+            .footer-section .col-md-4 { margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html">UrbanWear</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="product.html">Products</a></li>
+            <li class="nav-item"><a class="nav-link active" href="cart.html">Cart</a></li>
+            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Cart Section -->
+    <section class="container py-5">
+      <h2 class="text-center mb-4">Your Cart</h2>
+      
+      <div id="cart-empty" class="empty-cart" style="display: none;">
+        <i class="bi bi-cart-x" style="font-size: 4rem; color: #6c757d;"></i>
+        <h3 class="mt-3">Your cart is empty</h3>
+        <p class="text-muted">Browse our products and add some items to your cart!</p>
+        <a href="product.html" class="btn btn-primary mt-3">Continue Shopping</a>
+      </div>
+
+      <div id="cart-content">
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle text-center" id="cart-table">
+            <thead class="table-light">
+              <tr>
+                <th>Product Image</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="cart-items">
+              <!-- JS will insert cart items here -->
+            </tbody>
+          </table>
+        </div>
+        <div class="text-end mt-4">
+          <h4>Total: $<span id="total-price">0.00</span></h4>
+          <button class="btn btn-success mt-3 btn-lg" id="checkout-btn">Proceed to Checkout</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer (Same as Home Page) -->
+    <footer class="footer-section text-center text-md-start">
+        <div class="container">
+            <div class="row align-items-start">
+                <!-- Logo + About -->
+                <div class="col-md-4 mb-4 mb-md-0 text-md-start">
+                    <div class="footer-logo">UrbanWear</div>
+                    <p class="text-secondary">
+                        Discover the art of modern fashion with UrbanWear.<br>
+                        Designed for comfort, confidence, and creativity.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-4 mb-4 mb-md-0 text-md-center">
+                    <h5>Quick Links</h5>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="product.html">Products</a></li>
+                        <li><a href="cart.html">Cart</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Social Icons -->
+                <div class="col-md-4 text-md-end">
+                    <h5>Follow Us</h5>
+                    <div class="social-icons mt-3">
+                        <a href="https://www.facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
+                        <a href="https://www.instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.twitter.com" target="_blank"><i class="bi bi-twitter"></i></a>
+                        <a href="https://www.pinterest.com" target="_blank"><i class="bi bi-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom text-center mt-4">
+                <p>&copy; 2025 <span>UrbanWear</span>. All Rights Reserved.</p>
+                <p>Designed with ❤️ by <span>UrbanWear Team</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Cart functionality
+        let cart = JSON.parse(localStorage.getItem("urbanWearCart")) || [];
+        let justCompletedPurchase = false;
+
+        function displayCart() {
+            const cartItems = document.getElementById("cart-items");
+            const totalPriceElement = document.getElementById("total-price");
+            const cartEmpty = document.getElementById("cart-empty");
+            const cartContent = document.getElementById("cart-content");
+
+            // If cart is empty and we haven't just completed a purchase
+            if (cart.length === 0 && !justCompletedPurchase) {
+                cartEmpty.style.display = "block";
+                cartContent.style.display = "none";
+                return;
+            }
+
+            // Show cart content
+            cartEmpty.style.display = "none";
+            cartContent.style.display = "block";
+
+            cartItems.innerHTML = "";
+            let totalPrice = 0;
+
+            cart.forEach((item, index) => {
+                // Extract price from string (remove $ sign)
+                const price = parseFloat(item.price.replace('$', ''));
+                const quantity = item.quantity || 1;
+                const subtotal = price * quantity;
+                totalPrice += subtotal;
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>
+                        <img src="${item.img}" alt="${item.name}" class="cart-img">
+                    </td>
+                    <td>${item.name}</td>
+                    <td>${item.price}</td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                            <input type="number" class="quantity-input" value="${quantity}" min="1" onchange="updateQuantityInput(${index}, this.value)">
+                            <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                        </div>
+                    </td>
+                    <td>$${subtotal.toFixed(2)}</td>
+                    <td>
+                        <button class="remove-btn" onclick="removeFromCart(${index})">
+                            Remove
+                        </button>
+                    </td>
+                `;
+                cartItems.appendChild(row);
+            });
+
+            totalPriceElement.textContent = totalPrice.toFixed(2);
+        }
+
+        function updateQuantity(index, change) {
+            if (!cart[index].quantity) {
+                cart[index].quantity = 1;
+            }
+            
+            cart[index].quantity += change;
+            
+            if (cart[index].quantity < 1) {
+                cart[index].quantity = 1;
+            }
+            
+            localStorage.setItem("urbanWearCart", JSON.stringify(cart));
+            displayCart();
+        }
+
+        function updateQuantityInput(index, value) {
+            const quantity = parseInt(value);
+            if (quantity > 0) {
+                cart[index].quantity = quantity;
+                localStorage.setItem("urbanWearCart", JSON.stringify(cart));
+                displayCart();
+            }
+        }
+
+        function removeFromCart(index) {
+            if (confirm("Are you sure you want to remove this item from your cart?")) {
+                cart.splice(index, 1);
+                localStorage.setItem("urbanWearCart", JSON.stringify(cart));
+                displayCart();
+            }
+        }
+
+        // Checkout button
+        document.getElementById("checkout-btn").addEventListener("click", function() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            
+            alert("Thank you for your purchase! Your order has been placed.");
+            cart = [];
+            localStorage.setItem("urbanWearCart", JSON.stringify(cart));
+            
+            // Set flag to indicate we just completed a purchase
+            justCompletedPurchase = true;
+            
+            // Redirect to products page after purchase
+            setTimeout(function() {
+                window.location.href = "product.html";
+            }, 1500);
+        });
+
+        // Initialize cart display
+        displayCart();
+    </script>
+</body>
+</html>
